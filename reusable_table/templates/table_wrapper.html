@@ -1,0 +1,56 @@
+<div>
+<p class="notice hidden"><a class="expander">There are {{ object_list.count }} record(s). Click to expand.</a></p>
+{% if rows %}
+<a name="{{ table_key }}"></a>
+<table class="">
+    <thead>
+        <tr>
+            {% for row in columns %}
+                {% if row.column %}
+                    <th><a href="?sort_{{ table_key }}_{{ row.column }}={% if row.asc %}desc{% else %}asc{% endif %}#{{ table_key }}">{{ row.name }}</a></th>
+                {% else %}
+                    <th>{{ row.name }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            {{ row|safe }}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="notice">No results found.</p>
+{% endif %}
+<div class="pagination">
+{% if object_list.paginated %}
+
+    {% if object_list.page.has_previous %}
+        <a class="next" href="{{ paginate_url }}?page_{{ table_key }}={{ object_list.page.previous_page_number }}">&larr; Previous</a>
+    {% endif %}
+
+    {% for page in object_list.jump.pages_bit %}
+        {% if object_list.jump.start_ellipsis and forloop.first %}<span>...</span>{% endif %}
+        {% ifequal page object_list.page.number %}
+            <span>{{ page }}</span>
+        {% else %}
+            <span><a href="{{ paginate_url }}?page_{{ table_key }}={{ page }}" class="page">{{ page }}</a></span>
+        {% endifequal %}
+        {% if object_list.jump.end_ellipsis and forloop.last %}<span>...</span>{% endif %}
+    {% endfor %}
+
+    {% if object_list.page.has_next %}
+        <a class="next" href="{{ paginate_url }}?page_{{ table_key }}={{ object_list.page.next_page_number }}">Next &rarr;</a>
+    {% endif %}
+{% endif %}
+
+    <span>
+        {% for format in formats %} <a href="?format_{{ table_key }}={{ format }}">{{ format }}</a> - {% endfor %}
+        {% now "h:m:s a" %}
+    </span>
+    </div>    
+</div>
+

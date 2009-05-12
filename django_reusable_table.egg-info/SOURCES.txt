@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+django_reusable_table.egg-info/PKG-INFO
+django_reusable_table.egg-info/SOURCES.txt
+django_reusable_table.egg-info/dependency_links.txt
+django_reusable_table.egg-info/top_level.txt
+reusable_table/__init__.py
+reusable_table/table.py
+reusable_table/tests.py
