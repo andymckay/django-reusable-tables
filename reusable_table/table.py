@@ -28,7 +28,7 @@ from datetime import datetime
 path = os.path.join(os.path.dirname(__file__), "templates")
 
 def paginate(queryset, number, size=pagination_size_default):
-    pages = Paginator(queryset, pagination_size_default)
+    pages = Paginator(queryset, size)
     result = { "pages": pages, "count": queryset.count(), "jump": jump(pages, number) }
     if pages.num_pages > 1:
         result["paginated"] = True
@@ -63,7 +63,7 @@ def jump(pages, index):
     return res
 
 class Table:
-    def __init__(self, model, fields):
+    def __init__(self, model, fields, size):
         self.model = model
         results = []
         for head, column, bit in fields:
@@ -72,6 +72,7 @@ class Table:
         self.template_wrapper = Template(open(os.path.join(path, "table_wrapper.html")).read())
         self.html_second_column = open(os.path.join(path, "html_second_column.html")).read()
         self.html_first_column = open(os.path.join(path, "html_first_column.html")).read()
+        self.size = size
     
     def __call__(self, request, key, queryset):
         self.key = key
@@ -165,7 +166,7 @@ class Table:
                 h["asc"] = False
                 break        
             
-        paginated = paginate(queryset, default)
+        paginated = paginate(queryset, default, self.size)
         rows = []
         for row in paginated["page"].object_list:
             ctx = Context({"object": row})
@@ -195,10 +196,10 @@ class Table:
         return self.template_wrapper.render(Context(self.context))
 
 tables = {}
-def register(name, model, fields):
+def register(name, model, fields, size=pagination_size_default):
     global tables
     for field in fields: assert len(field) == 3
-    tables[name] = Table(model, fields)
+    tables[name] = Table(model, fields, size)
     
 def get(request, tabs):
     result = []
