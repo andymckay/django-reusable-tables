@@ -16,7 +16,9 @@ try:
     formats.append("pdf")
 except ImportError:
     pass
-    
+
+from django.core.handlers.wsgi import WSGIRequest
+from django.template import RequestContext
 
 import os
 import csv
@@ -114,7 +116,11 @@ class Table:
         filename = mkstemp(".pdf")[-1]
         doc = SimpleDocTemplate(filename)
 
-        elements.append(Paragraph("MCTC", styles['Title']))
+        request = WSGIRequest({'REQUEST_METHOD':'GET'})
+        site = RequestContext(request).get('site')
+        if site and site.get('title'):
+            elements.append(Paragraph(site.get('title'), styles['Title']))
+        
         elements.append(Paragraph("%s List" % self.model.__name__, styles['Heading2']))        
 
         data = []
