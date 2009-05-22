@@ -153,18 +153,22 @@ class Table:
         except (TypeError, ValueError):
             default = 1
         
+        sort_key, sort_value = None, None
         for h in self.fields:
             column = h["column"]
             sort_key = "sort_%s_%s" % (self.key, column)
             value = request.GET.get(sort_key, None)
             h["asc"] = True            
+            sort_value = "asc"
             if value == "asc":
                 queryset = queryset.order_by(column)
                 break
             elif value == "desc":
                 queryset = queryset.order_by("-%s" % column)
                 h["asc"] = False
-                break        
+                sort_value = "desc"
+                break
+            
             
         paginated = paginate(queryset, default, self.size)
         rows = []
@@ -176,7 +180,7 @@ class Table:
                 if first:
                     bit = self.html_first_column % (
                         row.get_absolute_url(), 
-                        Template(h["bit"]).render(ctx)
+                        Template(h["bit"]).render(ctx),
                         )
                     first = False
                 else:
@@ -191,7 +195,9 @@ class Table:
             "rows": rows,
             "object_list": paginated,
             "table_key": self.key,
-            "formats": formats
+            "formats": formats,
+            "sort_key": sort_key,
+            "sort_value": sort_value
         }
         return self.template_wrapper.render(Context(self.context))
 
@@ -200,7 +206,7 @@ def register(name, model, fields, size=pagination_size_default):
     global tables
     for field in fields: assert len(field) == 3
     tables[name] = Table(model, fields, size)
-    
+
 def get(request, tabs):
     result = []
     nonhtml = None
@@ -210,6 +216,19 @@ def get(request, tabs):
         if not nonhtml and format != "html":
             nonhtml = tab
         result.append(tab)
+        x += 1
+
+    return nonhtml, result
+
+def get_dict(request, tabs):
+    result = {}
+    nonhtml = None
+    x = 1
+    for name, query in tabs:
+        format, tab = tables[name](request, str(x), query)
+        if not nonhtml and format != "html":
+            nonhtml = tab
+        result[name] = tab
         x += 1
 
     return nonhtml, result

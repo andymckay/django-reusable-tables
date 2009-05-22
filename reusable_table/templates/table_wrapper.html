@@ -2,7 +2,7 @@
 <p class="notice hidden"><a class="expander">There are {{ object_list.count }} record(s). Click to expand.</a></p>
 {% if rows %}
 <a name="{{ table_key }}"></a>
-<table class="">
+<table class="" id="table-{{ table_key }}">
     <thead>
         <tr>
             {% for row in columns %}
@@ -29,7 +29,7 @@
 {% if object_list.paginated %}
 
     {% if object_list.page.has_previous %}
-        <a class="next" href="{{ paginate_url }}?page_{{ table_key }}={{ object_list.page.previous_page_number }}">&larr; Previous</a>
+        <a class="next" href="{{ paginate_url }}?page_{{ table_key }}={{ object_list.page.previous_page_number }}{% if sort_key %}&amp;{{ sort_key }}={{ sort_value }}{% endif %}#{{ table_key }}">&larr; Previous</a>
     {% endif %}
 
     {% for page in object_list.jump.pages_bit %}
@@ -37,13 +37,13 @@
         {% ifequal page object_list.page.number %}
             <span>{{ page }}</span>
         {% else %}
-            <span><a href="{{ paginate_url }}?page_{{ table_key }}={{ page }}" class="page">{{ page }}</a></span>
+            <span><a href="{{ paginate_url }}?page_{{ table_key }}={{ page }}{% if sort_key %}&amp;{{ sort_key }}={{ sort_value }}{% endif %}#{{ table_key }}" class="page">{{ page }}</a></span>
         {% endifequal %}
         {% if object_list.jump.end_ellipsis and forloop.last %}<span>...</span>{% endif %}
     {% endfor %}
 
     {% if object_list.page.has_next %}
-        <a class="next" href="{{ paginate_url }}?page_{{ table_key }}={{ object_list.page.next_page_number }}">Next &rarr;</a>
+        <a class="next" href="{{ paginate_url }}?page_{{ table_key }}={{ object_list.page.next_page_number }}{% if sort_key %}&amp;{{ sort_key }}={{ sort_value }}{% endif %}#{{ table_key }}">Next &rarr;</a>
     {% endif %}
 {% endif %}
 

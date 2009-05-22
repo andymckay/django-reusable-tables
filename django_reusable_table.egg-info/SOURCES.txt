@@ -1,9 +1,15 @@
+MANIFEST.in
+README.rst
 setup.cfg
 setup.py
 django_reusable_table.egg-info/PKG-INFO
 django_reusable_table.egg-info/SOURCES.txt
 django_reusable_table.egg-info/dependency_links.txt
+django_reusable_table.egg-info/not-zip-safe
 django_reusable_table.egg-info/top_level.txt
 reusable_table/__init__.py
 reusable_table/table.py
 reusable_table/tests.py
+reusable_table/templates/html_first_column.html
+reusable_table/templates/html_second_column.html
+reusable_table/templates/table_wrapper.html
