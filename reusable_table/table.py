@@ -13,6 +13,7 @@ try:
     from reportlab.platypus import TableStyle
     from reportlab.lib.enums import TA_LEFT
     from reportlab.lib import colors 
+    from reportlab.lib import pagesizes
     formats.append("pdf")
 except ImportError:
     pass
@@ -115,6 +116,7 @@ class Table:
         styles["Normal"].fontName = "Helvetica"
         filename = mkstemp(".pdf")[-1]
         doc = SimpleDocTemplate(filename)
+        doc.pagesize = pagesizes.landscape(pagesizes.LETTER)
 
         request = WSGIRequest({'REQUEST_METHOD':'GET'})
         site = RequestContext(request).get('site')
