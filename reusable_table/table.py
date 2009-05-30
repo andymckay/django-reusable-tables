@@ -164,15 +164,17 @@ class Table:
         sort_key, sort_value = None, None
         for h in self.fields:
             column = h["column"]
-            sort_key = "sort_%s_%s" % (self.key, column)
-            value = request.GET.get(sort_key, None)
+            tmp_sort_key = "sort_%s_%s" % (self.key, column)
+            value = request.GET.get(tmp_sort_key, None)
             h["asc"] = True            
             sort_value = "asc"
             if value == "asc":
                 queryset = queryset.order_by(column)
+                sort_key = tmp_sort_key
                 break
             elif value == "desc":
                 queryset = queryset.order_by("-%s" % column)
+                sort_key = tmp_sort_key
                 h["asc"] = False
                 sort_value = "desc"
                 break
